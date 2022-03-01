@@ -1,13 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import FeedbackContext from "../contexts/FeedbackContext";
+import { FeedbackContextInterface } from "../interfaces";
 
 interface RatingSelectProps {
   min: number;
   max: number;
-  select: (rating: number) => void;
+  rating: number;
+  setRating: (rating: number) => void;
 }
 
-const RatingSelect = ({ min, max, select }: RatingSelectProps) => {
-  const [selected, setSelected] = useState<number>(max);
+const RatingSelect = ({ min, max, rating, setRating }: RatingSelectProps) => {
+  // const [selected, setSelected] = useState<number>(max);
+
+  // const { feedbackForEdit } = useContext(
+  //   FeedbackContext
+  // ) as FeedbackContextInterface;
+
+  // useEffect(() => {
+  //   setSelected(rating);
+  // }, [rating]);
 
   const selectNumbers = Array(max - min + 1)
     .fill(0)
@@ -16,8 +27,8 @@ const RatingSelect = ({ min, max, select }: RatingSelectProps) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = +e.currentTarget.value;
 
-    setSelected(value);
-    select(value)
+    // setSelected(value);
+    setRating(value);
   };
 
   return (
@@ -31,7 +42,7 @@ const RatingSelect = ({ min, max, select }: RatingSelectProps) => {
             name="rating"
             value={num}
             onChange={handleChange}
-            checked={selected === num}
+            checked={rating === num}
           />
           <div className="peer-checked:bg-amber-400 bg-amber-200 w-10 aspect-square rounded-full relative text-white hover:bg-amber-300 transition-all">
             <label

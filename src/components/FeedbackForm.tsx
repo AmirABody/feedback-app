@@ -1,16 +1,24 @@
-import { useState } from "react";
-import { Feedback } from "../interfaces";
+import { useState, useContext, useEffect } from "react";
+import FeedbackContext from "../contexts/FeedbackContext";
+import { Feedback, FeedbackContextInterface } from "../interfaces";
 import RatingSelect from "./RatingSelect";
 
-interface FeedbackFormProps {
-  handleAdd: (newFeedback: Feedback) => void;
-}
-
-const FeedbackForm = ({ handleAdd }: FeedbackFormProps) => {
+const FeedbackForm = () => {
   const [text, setText] = useState<string>("");
   const [rating, setRating] = useState<number>(10);
   const [btnDisabled, setBtnDisabled] = useState<boolean>(true);
   const [message, setMessage] = useState<string>("");
+
+  const { addFeedback, feedbackForEdit, setFeedbackForEdit, updateFeedback } =
+    useContext(FeedbackContext) as FeedbackContextInterface;
+
+  useEffect(() => {
+    if (feedbackForEdit) {
+      setBtnDisabled(false);
+      setText(feedbackForEdit.text);
+      setRating(feedbackForEdit.rating);
+    }
+  }, [feedbackForEdit]);
 
   const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -29,6 +37,17 @@ const FeedbackForm = ({ handleAdd }: FeedbackFormProps) => {
     setText(value);
   };
 
+  const resetForm = (): void => {
+    setText("");
+    setRating(10);
+    setBtnDisabled(true);
+  };
+
+  const cancelEdit = (): void => {
+    setFeedbackForEdit(null);
+    resetForm()
+  };
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -39,18 +58,33 @@ const FeedbackForm = ({ handleAdd }: FeedbackFormProps) => {
         rating,
       };
 
-      handleAdd(newFeedback);
+      if (feedbackForEdit) {
+        updateFeedback(feedbackForEdit.id, newFeedback);
+        setFeedbackForEdit(null);
+      } else {
+        addFeedback(newFeedback);
+      }
 
-      setText("");
+      resetForm();
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="bg-white rounded p-4 mb-4">
+      {feedbackForEdit && (
+        <div className="relative">
+          <button
+            className="bg-red-50 text-red-500 text-xs px-1 py-[0.15rem] rounded-sm absolute right-0 hover:bg-red-300 hover:text-white transition-all"
+            onClick={cancelEdit}
+          >
+            Cancel Edit
+          </button>
+        </div>
+      )}
       <h2 className="text-gray-900 text-lg text-center font-medium mb-4">
         How would you rate our application?
       </h2>
-      <RatingSelect min={1} max={10} select={(rating) => setRating(rating)} />
+      <RatingSelect min={1} max={10} rating={rating} setRating={setRating} />
       <div className="flex items-center justify-between mb-1">
         <input
           type="text"
@@ -64,7 +98,7 @@ const FeedbackForm = ({ handleAdd }: FeedbackFormProps) => {
           className="bg-amber-500 text-white px-3 py-1 rounded-r-sm text-sm self-stretch hover:bg-amber-400 disabled:bg-gray-300 transition-all"
           disabled={btnDisabled}
         >
-          Add
+          {feedbackForEdit ? "Edit" : "Add"}
         </button>
       </div>
       {message && <div className="text-[0.8rem] text-red-400">{message}</div>}

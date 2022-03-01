@@ -7,8 +7,9 @@ export interface Feedback {
 export interface FeedbackContextInterface {
   feedbacks: Feedback[];
   feedbackForEdit: Feedback | null;
+  isLoading: boolean;
   addFeedback: (newFeedback: Feedback) => void;
   deleteFeedback: (id: string) => void;
   updateFeedback: (id: string, updFeedack: Feedback) => void;
-  setFeedbackForEdit: (feedback: Feedback | null) => void
+  setFeedbackForEdit: (feedback: Feedback | null) => void;
 }

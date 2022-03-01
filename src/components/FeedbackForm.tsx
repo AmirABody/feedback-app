@@ -53,7 +53,7 @@ const FeedbackForm = () => {
 
     if (text.trim().length >= 10) {
       const newFeedback: Feedback = {
-        id: "0",
+        id: "",
         text,
         rating,
       };

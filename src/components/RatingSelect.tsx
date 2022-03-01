@@ -1,6 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
-import FeedbackContext from "../contexts/FeedbackContext";
-import { FeedbackContextInterface } from "../interfaces";
+import React from "react";
 
 interface RatingSelectProps {
   min: number;
@@ -10,25 +8,12 @@ interface RatingSelectProps {
 }
 
 const RatingSelect = ({ min, max, rating, setRating }: RatingSelectProps) => {
-  // const [selected, setSelected] = useState<number>(max);
-
-  // const { feedbackForEdit } = useContext(
-  //   FeedbackContext
-  // ) as FeedbackContextInterface;
-
-  // useEffect(() => {
-  //   setSelected(rating);
-  // }, [rating]);
-
   const selectNumbers = Array(max - min + 1)
     .fill(0)
     .map((el, index) => index + min);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = +e.currentTarget.value;
-
-    // setSelected(value);
-    setRating(value);
+    setRating(+e.currentTarget.value);
   };
 
   return (
